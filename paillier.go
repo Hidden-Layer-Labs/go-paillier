@@ -122,7 +122,7 @@ func Mul(pk *PublicKey, ct *big.Int, msg int64) *big.Int {
 	return new(big.Int).Exp(ct, new(big.Int).SetInt64(msg), pk.n2)
 }
 
-func (pk *PublicKey) BatchAdd(cts ...*big.Int) *big.Int {
+func BatchAdd(pk *PublicKey, cts ...*big.Int) *big.Int {
 	total := new(big.Int).SetInt64(1)
 	for i, ct := range cts {
 		total.Mul(total, ct)

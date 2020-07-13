@@ -7,7 +7,7 @@ The code is heavilty adapted from [stefanomozart/pailler](https://github.com/ste
 
 ### Installation
 
-Use `got get` to install the package
+Use `go get` to install the package
 
 ```
 go get -u github.com/hidden-layer-labs/go-paillier
@@ -36,17 +36,21 @@ func main() {
 	c2 := paillier.Encrypt(pk, 20)
 	c3 := paillier.Encrypt(pk, 30)
 	c4 := paillier.Encrypt(pk, 40)
+	c5 := paillier.Encrypt(pk, 50)
+	c6 := paillier.Encrypt(pk, 60)
 
-	c := paillier.Add(pk,
+	c7 := paillier.Add(pk,
 		paillier.Add(pk, c1, c2),
 		paillier.Add(pk, c3, c4),
 	)
 
-	d := paillier.Mul(pk, c, 2);
+	c := paillier.BatchAdd(pk, c5, c6, c7)
+
+	d := paillier.Mul(pk, c, 2)
 
 	m := paillier.Decrypt(sk, d)
 
-	fmt.Println(m)  // outputs "200"
+	fmt.Println(m)  // outputs "420"
 }
 ```
 
