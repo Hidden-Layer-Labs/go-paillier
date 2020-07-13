@@ -3,6 +3,7 @@ package paillier
 import (
 	"crypto/rand"
 	"math/big"
+	"strings"
 	"fmt"
 )
 
@@ -17,9 +18,9 @@ type Keypair struct {
 }
 
 type PublicKey struct {
-	N  *big.Int
+	n  *big.Int
 	g  *big.Int
-	N2 *big.Int
+	n2 *big.Int
 }
 
 type PrivateKey struct {
@@ -36,33 +37,61 @@ func GenerateKeypair() *Keypair {
 }
 
 func (kp *Keypair) ToKeys() (*PublicKey, *PrivateKey) {
-	N := new(big.Int).Mul(kp.p, kp.q)
-	N2 := new(big.Int).Mul(N, N)
+	n := new(big.Int).Mul(kp.p, kp.q)
+	n2 := new(big.Int).Mul(n, n)
 
 	lambda := phi(kp.p, kp.q)
-	mu := new(big.Int).ModInverse(lambda, N)
-	g := new(big.Int).Add(N, one)
+	mu := new(big.Int).ModInverse(lambda, n)
+	g := new(big.Int).Add(n, one)
 
-	pk := &PublicKey { N, g, N2 }
+	pk := &PublicKey { n, g, n2 }
 	sk := &PrivateKey { mu, lambda, pk }
 
 	return pk, sk
 }
 
+func (pk *PublicKey) ToString() string {
+	return fmt.Sprintf("%v;%v", pk.n.Text(16), pk.g.Text(16))
+}
+
+func PublicKeyFromString(s string) *PublicKey {
+	pieces := strings.Split(s, ";")
+
+	if len(pieces) != 2 {
+		panic("there aren't two pieces to the public key")
+	}
+
+	n, ok := new(big.Int).SetString(pieces[0], 16)
+
+	if !ok {
+		panic("invalid value for the modulus n")
+	}
+
+	g, ok := new(big.Int).SetString(pieces[1], 16)
+
+	if !ok {
+		panic("invalid value for the modulus n")
+	}
+
+	n2 := new(big.Int).Mul(n, n)
+
+	return &PublicKey { n, g, n2 }
+}
+
 func Encrypt(pk *PublicKey, pt int64) *big.Int {
 	m := new(big.Int).SetInt64(pt)
 
-	if pt < 0 || m.Cmp(zero) == -1 || m.Cmp(pk.N) != -1 {
+	if pt < 0 || m.Cmp(zero) == -1 || m.Cmp(pk.n) != -1 {
 		panic("invalid plaintext")
 	}
 
-	r := getRandom(pk.N)
-	r.Exp(r, pk.N, pk.N2)
+	r := getRandom(pk.n)
+	r.Exp(r, pk.n, pk.n2)
 
-	m.Exp(pk.g, m, pk.N2)
+	m.Exp(pk.g, m, pk.n2)
 
 	c := new(big.Int).Mul(m, r)
-	return c.Mod(c, pk.N2)
+	return c.Mod(c, pk.n2)
 }
 
 func Decrypt(sk *PrivateKey, ct *big.Int) int64 {
@@ -70,9 +99,9 @@ func Decrypt(sk *PrivateKey, ct *big.Int) int64 {
 		panic("invalid ciphertext")
 	}
 
-	m := L(new(big.Int).Exp(ct, sk.lambda, sk.pk.N2), sk.pk.N)
+	m := L(new(big.Int).Exp(ct, sk.lambda, sk.pk.n2), sk.pk.n)
 	m.Mul(m, sk.mu)
-	m.Mod(m, sk.pk.N)
+	m.Mod(m, sk.pk.n)
 
 	return m.Int64()
 }
@@ -83,14 +112,14 @@ func Add(pk *PublicKey, ct1, ct2 *big.Int) *big.Int {
 	}
 	z := new(big.Int).Mul(ct1, ct2)
 
-	return z.Mod(z, pk.N2)
+	return z.Mod(z, pk.n2)
 }
 
 func Mul(pk *PublicKey, ct *big.Int, msg int64) *big.Int {
 	if ct == nil || ct.Cmp(zero) != 1 {
 		panic("invalid mul input")
 	}
-	return new(big.Int).Exp(ct, new(big.Int).SetInt64(msg), pk.N2)
+	return new(big.Int).Exp(ct, new(big.Int).SetInt64(msg), pk.n2)
 }
 
 func (pk *PublicKey) BatchAdd(cts ...*big.Int) *big.Int {
@@ -98,10 +127,10 @@ func (pk *PublicKey) BatchAdd(cts ...*big.Int) *big.Int {
 	for i, ct := range cts {
 		total.Mul(total, ct)
 		if i % 5 == 0 {
-			total.Mod(total, pk.N2)
+			total.Mod(total, pk.n2)
 		}
 	}
-	return total.Mod(total, pk.N2)
+	return total.Mod(total, pk.n2)
 }
 
 func L(x, n *big.Int) *big.Int {
