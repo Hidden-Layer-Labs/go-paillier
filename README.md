@@ -10,7 +10,7 @@ The code is heavilty adapted from [stefanomozart/pailler](https://github.com/ste
 Use `go get` to install the package
 
 ```
-go get -u github.com/hidden-layer-labs/go-paillier
+go get -u github.com/hiddenlayer-so/go-paillier
 ```
 
 ### Usage
@@ -21,7 +21,7 @@ A snippet of code that sums up the entire functionality of go-paillier follows.
 package main
 
 import (
-	"github.com/hidden-layer-labs/go-paillier"
+	"github.com/hiddenlayer-ai/go-paillier"
 	"fmt"
 )
 

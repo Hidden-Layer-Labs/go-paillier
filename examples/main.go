@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/hidden-layer-labs/go-paillier"
 	"fmt"
+
+	"github.com/hiddenlayer-ai/go-paillier"
 )
 
 func main() {
@@ -26,7 +27,7 @@ func main() {
 
 	c := paillier.BatchAdd(pk, c5, c6, c7)
 
-	d := paillier.Mul(pk, c, 2);
+	d := paillier.Mul(pk, c, 2)
 
 	m := paillier.Decrypt(sk, d)
 

@@ -1,3 +1,3 @@
-module github.com/hidden-layer-labs/go-paillier
+module github.com/hiddenlayer-ai/go-paillier
 
 go 1.13
