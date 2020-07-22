@@ -9,7 +9,7 @@ import (
 func main() {
 	pk, sk := paillier.GenerateKeypair().ToKeys()
 
-	str := pk.ToString()
+	str := pk.String()
 
 	pk = paillier.PublicKeyFromString(str)
 

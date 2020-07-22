@@ -21,14 +21,15 @@ A snippet of code that sums up the entire functionality of go-paillier follows.
 package main
 
 import (
-	"github.com/hiddenlayer-ai/go-paillier"
 	"fmt"
+
+	"github.com/hiddenlayer-ai/go-paillier"
 )
 
 func main() {
 	pk, sk := paillier.GenerateKeypair().ToKeys()
 
-	str := pk.ToString()
+	str := pk.String()
 
 	pk = paillier.PublicKeyFromString(str)
 
@@ -50,8 +51,8 @@ func main() {
 
 	m := paillier.Decrypt(sk, d)
 
-	fmt.Println(m)  // outputs "420"
+	fmt.Println(m)
 }
 ```
 
-Note that `GenerateKeypair` does not take any arguments and by default creates 2048-bit keys. This will likely change in the future. Additionally, recognize that the string format of the public key's ToString is `"{n};{g}"` where `{n}` and `{g}` are the respective parameters of the public key.
+Note that `GenerateKeypair` does not take any arguments and by default creates 2048-bit keys. This will likely change in the future. Additionally, recognize that the string format of the public key's `String` is `"{n};{g}"` where `{n}` and `{g}` are the respective parameters of the public key. Futhurmore, the keypair struct returned from `GenerateKeypair` has a `String` method and a `KeypairFromString` method.

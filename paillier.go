@@ -2,12 +2,12 @@ package paillier
 
 import (
 	"crypto/rand"
+	"fmt"
 	"math/big"
 	"strings"
-	"fmt"
 )
 
-const BITLEN = 2048;
+const BITLEN = 2048
 
 var zero = new(big.Int).SetInt64(0)
 var one = new(big.Int).SetInt64(1)
@@ -33,7 +33,7 @@ func GenerateKeypair() *Keypair {
 	p := getPrime(BITLEN / 2)
 	q := getPrime(BITLEN / 2)
 
-	return &Keypair{ p, q }
+	return &Keypair{p, q}
 }
 
 func (kp *Keypair) ToKeys() (*PublicKey, *PrivateKey) {
@@ -44,13 +44,39 @@ func (kp *Keypair) ToKeys() (*PublicKey, *PrivateKey) {
 	mu := new(big.Int).ModInverse(lambda, n)
 	g := new(big.Int).Add(n, one)
 
-	pk := &PublicKey { n, g, n2 }
-	sk := &PrivateKey { mu, lambda, pk }
+	pk := &PublicKey{n, g, n2}
+	sk := &PrivateKey{mu, lambda, pk}
 
 	return pk, sk
 }
 
-func (pk *PublicKey) ToString() string {
+func (kp *Keypair) String() string {
+	return fmt.Sprintf("%v;%v", kp.p.Text(16), kp.q.Text(16))
+}
+
+func KeypairFromString(s string) *Keypair {
+	pieces := strings.Split(s, ";")
+
+	if len(pieces) != 2 {
+		panic("there aren't two pieces to the public key")
+	}
+
+	p, ok := new(big.Int).SetString(pieces[0], 16)
+
+	if !ok {
+		panic("invalid value for the prime p")
+	}
+
+	q, ok := new(big.Int).SetString(pieces[1], 16)
+
+	if !ok {
+		panic("invalid value for the prime q")
+	}
+
+	return &Keypair{p, q}
+}
+
+func (pk *PublicKey) String() string {
 	return fmt.Sprintf("%v;%v", pk.n.Text(16), pk.g.Text(16))
 }
 
@@ -75,7 +101,7 @@ func PublicKeyFromString(s string) *PublicKey {
 
 	n2 := new(big.Int).Mul(n, n)
 
-	return &PublicKey { n, g, n2 }
+	return &PublicKey{n, g, n2}
 }
 
 func Encrypt(pk *PublicKey, pt int64) *big.Int {
@@ -126,7 +152,7 @@ func BatchAdd(pk *PublicKey, cts ...*big.Int) *big.Int {
 	total := new(big.Int).SetInt64(1)
 	for i, ct := range cts {
 		total.Mul(total, ct)
-		if i % 5 == 0 {
+		if i%5 == 0 {
 			total.Mod(total, pk.n2)
 		}
 	}

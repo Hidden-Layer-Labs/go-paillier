@@ -7,12 +7,12 @@ import (
 
 func TestSum(t *testing.T) {
 	tables := []struct {
-		input []int64
+		input  []int64
 		output int64
-	} {
-		{ []int64{ 10, 20, 30 }, 60 },
-		{ []int64{ 25, 50, 75, 100 }, 250 },
-		{ []int64{ 1 }, 1 },
+	}{
+		{[]int64{10, 20, 30}, 60},
+		{[]int64{25, 50, 75, 100}, 250},
+		{[]int64{1}, 1},
 	}
 
 	pk, sk := GenerateKeypair().ToKeys()
@@ -34,14 +34,14 @@ func TestSum(t *testing.T) {
 
 func TestMul(t *testing.T) {
 	tables := []struct {
-		base int64
+		base       int64
 		multiplier int64
-		output int64
-	} {
-		{ 0, 2, 0 },
-		{ 25, 5, 125 },
-		{ 100, 0, 0 },
-		{ 6, 75, 450 },
+		output     int64
+	}{
+		{0, 2, 0},
+		{25, 5, 125},
+		{100, 0, 0},
+		{6, 75, 450},
 	}
 
 	pk, sk := GenerateKeypair().ToKeys()
@@ -59,12 +59,12 @@ func TestMul(t *testing.T) {
 
 func TestBatchSum(t *testing.T) {
 	tables := []struct {
-		input []int64
+		input  []int64
 		output int64
-	} {
-		{ []int64{ 10, 20, 30 }, 60 },
-		{ []int64{ 25, 50, 75, 100 }, 250 },
-		{ []int64{ 1 }, 1 },
+	}{
+		{[]int64{10, 20, 30}, 60},
+		{[]int64{25, 50, 75, 100}, 250},
+		{[]int64{1}, 1},
 	}
 
 	pk, sk := GenerateKeypair().ToKeys()
@@ -89,10 +89,23 @@ func TestPublicKeyStrings(t *testing.T) {
 	for i := 0; i < 4; i++ {
 		pk, _ := GenerateKeypair().ToKeys()
 
-		pk_str := pk.ToString()
+		pk_str := pk.String()
 		pk_back := PublicKeyFromString(pk_str)
 
 		if pk.n.Cmp(pk_back.n) != 0 || pk.g.Cmp(pk_back.g) != 0 || pk.n2.Cmp(pk_back.n2) != 0 {
+			t.Errorf("public key conversion for string failed!")
+		}
+	}
+}
+
+func TestKeypairString(t *testing.T) {
+	for i := 0; i < 4; i++ {
+		kp := GenerateKeypair()
+
+		kp_str := kp.String()
+		kp_back := KeypairFromString(kp_str)
+
+		if kp.p.Cmp(kp_back.p) != 0 || kp.q.Cmp(kp_back.q) != 0 {
 			t.Errorf("public key conversion for string failed!")
 		}
 	}
