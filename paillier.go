@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-const BITLEN = 2048
-
 var zero = new(big.Int).SetInt64(0)
 var one = new(big.Int).SetInt64(1)
 
@@ -29,9 +27,13 @@ type PrivateKey struct {
 	pk     *PublicKey
 }
 
-func GenerateKeypair() *Keypair {
-	p := getPrime(BITLEN / 2)
-	q := getPrime(BITLEN / 2)
+func GenerateKeypair(bitlen uint) *Keypair {
+	if bitlen < 1024 {
+		panic("keypair bitlen must be at least 1024")
+	}
+
+	p := getPrime(int(bitlen) / 2)
+	q := getPrime(int(bitlen) / 2)
 
 	return &Keypair{p, q}
 }

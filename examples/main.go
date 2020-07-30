@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	pk, sk := paillier.GenerateKeypair().ToKeys()
+	pk, sk := paillier.GenerateKeypair(2048).ToKeys()
 
 	str := pk.String()
 

@@ -15,7 +15,7 @@ func TestSum(t *testing.T) {
 		{[]int64{1}, 1},
 	}
 
-	pk, sk := GenerateKeypair().ToKeys()
+	pk, sk := GenerateKeypair(1024).ToKeys()
 
 	for _, table := range tables {
 		sum := Encrypt(pk, 0)
@@ -44,7 +44,7 @@ func TestMul(t *testing.T) {
 		{6, 75, 450},
 	}
 
-	pk, sk := GenerateKeypair().ToKeys()
+	pk, sk := GenerateKeypair(1024).ToKeys()
 
 	for _, table := range tables {
 		this_base := Encrypt(pk, table.base)
@@ -67,7 +67,7 @@ func TestBatchSum(t *testing.T) {
 		{[]int64{1}, 1},
 	}
 
-	pk, sk := GenerateKeypair().ToKeys()
+	pk, sk := GenerateKeypair(1024).ToKeys()
 
 	for _, table := range tables {
 		this_input := make([]*big.Int, len(table.input))
@@ -87,7 +87,7 @@ func TestBatchSum(t *testing.T) {
 
 func TestPublicKeyStrings(t *testing.T) {
 	for i := 0; i < 4; i++ {
-		pk, _ := GenerateKeypair().ToKeys()
+		pk, _ := GenerateKeypair(1024).ToKeys()
 
 		pk_str := pk.String()
 		pk_back := PublicKeyFromString(pk_str)
@@ -100,7 +100,7 @@ func TestPublicKeyStrings(t *testing.T) {
 
 func TestKeypairString(t *testing.T) {
 	for i := 0; i < 4; i++ {
-		kp := GenerateKeypair()
+		kp := GenerateKeypair(1024)
 
 		kp_str := kp.String()
 		kp_back := KeypairFromString(kp_str)

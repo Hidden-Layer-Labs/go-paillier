@@ -10,7 +10,7 @@ The code is heavilty adapted from [stefanomozart/pailler](https://github.com/ste
 Use `go get` to install the package
 
 ```
-go get -u github.com/hiddenlayer-so/go-paillier
+go get -u github.com/hiddenlayer-ai/go-paillier
 ```
 
 ### Usage
@@ -27,7 +27,7 @@ import (
 )
 
 func main() {
-	pk, sk := paillier.GenerateKeypair().ToKeys()
+	pk, sk := paillier.GenerateKeypair(2048).ToKeys()
 
 	str := pk.String()
 
@@ -51,8 +51,10 @@ func main() {
 
 	m := paillier.Decrypt(sk, d)
 
-	fmt.Println(m)
+	fmt.Println(m) // 420
 }
 ```
+
+The bitlen for the keypair must be at least 1024, but it is recommended to be at least 2048 for real applications.
 
 Note that `GenerateKeypair` does not take any arguments and by default creates 2048-bit keys. This will likely change in the future. Additionally, recognize that the string format of the public key's `String` is `"{n};{g}"` where `{n}` and `{g}` are the respective parameters of the public key. Futhurmore, the keypair struct returned from `GenerateKeypair` has a `String` method and a `KeypairFromString` method.
