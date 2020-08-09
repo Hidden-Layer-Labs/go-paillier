@@ -79,28 +79,17 @@ func KeypairFromString(s string) *Keypair {
 }
 
 func (pk *PublicKey) String() string {
-	return fmt.Sprintf("%v;%v", pk.n.Text(16), pk.g.Text(16))
+	return pk.n.Text(16)
 }
 
 func PublicKeyFromString(s string) *PublicKey {
-	pieces := strings.Split(s, ";")
-
-	if len(pieces) != 2 {
-		panic("there aren't two pieces to the public key")
-	}
-
-	n, ok := new(big.Int).SetString(pieces[0], 16)
+	n, ok := new(big.Int).SetString(s, 16)
 
 	if !ok {
 		panic("invalid value for the modulus n")
 	}
 
-	g, ok := new(big.Int).SetString(pieces[1], 16)
-
-	if !ok {
-		panic("invalid value for the modulus n")
-	}
-
+	g := new(big.Int).Add(n, one)
 	n2 := new(big.Int).Mul(n, n)
 
 	return &PublicKey{n, g, n2}
